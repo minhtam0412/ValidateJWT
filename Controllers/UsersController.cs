@@ -10,20 +10,13 @@ namespace ValidateJWT.Controllers
     [CustomAuthorization]
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController(IUserService userService, IOptions<AppSettings> appSettings, IHttpContextAccessor httpContextAccessor) : ControllerBase
     {
-        private IUserService _userService;
-        private readonly AppSettings _appSettings;
-        private IHttpContextAccessor _httpContextAccessor { get; }
+        private IUserService _userService = userService;
+        private readonly AppSettings _appSettings = appSettings.Value;
+        private IHttpContextAccessor _httpContextAccessor { get; } = httpContextAccessor;
 
-        public UsersController(IUserService userService, IOptions<AppSettings> appSettings, IHttpContextAccessor httpContextAccessor)
-        {
-            _userService = userService;
-            _appSettings = appSettings.Value;
-            _httpContextAccessor = httpContextAccessor;
-        }
-
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public IActionResult GetById(int id)
         {
             var userFromContextItem = _httpContextAccessor.HttpContext.Items["User"];
