@@ -2,13 +2,8 @@
 
 namespace ValidateJWT.Authorization
 {
-    public class JwtMiddleware
+    public class JwtMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
-        public JwtMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
         public async Task Invoke(HttpContext context, IUserService userService, IJwtUtils jwtUtils)
         {
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
@@ -19,7 +14,7 @@ namespace ValidateJWT.Authorization
                 context.Items["User"] = userService.GetById(userId.Value);
             }
 
-            await _next(context);
+            await next(context);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ValidateJWT.Entities;
@@ -61,7 +62,7 @@ namespace ValidateJWT.Authorization
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 var userId = int.Parse(jwtToken.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
-
+                var userData = JsonSerializer.Deserialize<object>(jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.UserData).Value);
                 // return user id from JWT token if validation successful
                 return userId;
             }
